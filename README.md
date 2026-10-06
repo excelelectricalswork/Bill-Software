@@ -1,4 +1,4 @@
-<!DOCTYPE html.txt>
+<index. html.txt>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
