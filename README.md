@@ -21,7 +21,7 @@
         .tab-content.active { display: block; }
 
         /* Invoice Layout */
-        .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+        .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
         .shop-info h2 { color: #1d4ed8; font-size: 22px; margin-bottom: 4px; }
         .shop-info p { font-size: 12px; color: #475569; line-height: 1.4; }
         .inv-meta { text-align: right; }
@@ -32,7 +32,7 @@
         .customer-box { background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         @media(max-width: 700px) { .customer-box { grid-template-columns: 1fr; } }
         .customer-box label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
-        .customer-box select, .customer-box textarea, .form-control { width: 100%; padding: 8px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; }
+        .customer-box select, .customer-box textarea { width: 100%; padding: 8px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; }
 
         table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 13px; }
         th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
@@ -63,7 +63,6 @@
         .btn-print { background: #2563eb; }
         .btn-print:hover { background: #1d4ed8; }
 
-        /* General Forms & Tables in other tabs */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; background: #f8fafc; padding: 15px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 20px; }
         .form-grid input { padding: 8px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; }
         .form-grid button { grid-column: 1 / -1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
@@ -79,7 +78,6 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
     <header>
         <div class="header-container">
             <div class="header-title">
@@ -96,7 +94,7 @@
     </header>
 
     <main>
-        <!-- TAB 1: BILLING & INVOICE -->
+        <!-- TAB 1: BILLING -->
         <div id="tab-billing" class="tab-content active">
             <div class="inv-header">
                 <div class="shop-info">
@@ -119,7 +117,6 @@
                 </div>
             </div>
 
-            <!-- Customer Selection -->
             <div class="customer-box">
                 <div>
                     <label>Select Registered Customer:</label>
@@ -133,7 +130,6 @@
                 </div>
             </div>
 
-            <!-- Items Table -->
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -153,7 +149,6 @@
                 <button onclick="addInvoiceRow()" class="add-row-btn no-print">+ Add Line Item</button>
             </div>
 
-            <!-- Totals & Bank Details -->
             <div class="totals-section">
                 <div class="bank-details">
                     <p style="font-weight: bold; margin-bottom: 4px;">Bank Details:</p>
@@ -188,7 +183,6 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="action-buttons no-print">
                 <button onclick="saveAndRecordInvoice()" class="btn btn-save">Save Invoice to GSTR Logs</button>
                 <button onclick="generateEWayBillJSON()" class="btn btn-json">Generate E-Way Bill JSON</button>
@@ -221,7 +215,7 @@
 
         <!-- TAB 3: PRODUCTS -->
         <div id="tab-products" class="tab-content">
-            <h2 class="section-title">Product & Service Master (Rewinding/Spares)</h2>
+            <h2 class="section-title">Product & Service Master</h2>
             <div class="form-grid">
                 <input type="text" id="prodDesc" placeholder="Item Description (e.g., Ceiling Fan Rewinding)" style="grid-column: span 2;">
                 <input type="text" id="prodHsn" placeholder="HSN/SAC Code (e.g. 995469)">
@@ -246,21 +240,21 @@
         <div id="tab-gstr" class="tab-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 class="section-title" style="border:none; margin:0;">GST Return Filing Summaries</h2>
-                <button onclick="loadGSTRData()" class="add-row-btn">Refresh Data</button>
+                <button onclick="loadGSTRData()" class="add-row-btn">Refresh Reports</button>
             </div>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
                 <h3 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">GSTR-1 Summary (Outward Supplies)</h3>
-                <div id="gstr1-content" style="font-size: 13px; color: #475569;">No saved invoices found for reporting period.</div>
+                <div id="gstr1-content" style="font-size: 13px; color: #475569;">Loading summary...</div>
             </div>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px;">
                 <h3 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">GSTR-3B Monthly Tax Liability Summary</h3>
-                <div id="gstr3b-content" style="font-size: 13px; color: #475569;">No liability recorded yet.</div>
+                <div id="gstr3b-content" style="font-size: 13px; color: #475569;">Loading liability...</div>
             </div>
         </div>
     </main>
 
     <script>
-        // Initialize Default Storage
+        // Setup initial local storage defaults if empty
         if (!localStorage.getItem('ee_customers')) {
             localStorage.setItem('ee_customers', JSON.stringify([
                 { name: "ALAMPALLY BROTHERS LTD", gstin: "32AACCA6248B1Z9", address: "Manalimukku, Naval Armament Depot P.O, Aluva-683563" }
@@ -277,8 +271,12 @@
             localStorage.setItem('ee_invoices', JSON.stringify([]));
         }
 
-        const dateInput = document.getElementById('invDate');
-        if(dateInput) dateInput.valueAsDate = new Date();
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('invDate');
+            if(dateInput) dateInput.valueAsDate = new Date();
+            initApp();
+        });
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -379,14 +377,16 @@
             const name = document.getElementById('newCustName').value.trim();
             const gstin = document.getElementById('newCustGst').value.trim();
             const address = document.getElementById('newCustAddress').value.trim();
-            if(!name) return alert('Enter customer name');
+            if(!name) return alert('Please enter customer name');
             
             let customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             customers.push({ name, gstin, address });
             localStorage.setItem('ee_customers', JSON.stringify(customers));
+            
             document.getElementById('newCustName').value = '';
             document.getElementById('newCustGst').value = '';
             document.getElementById('newCustAddress').value = '';
+            
             renderCustomers();
             initApp();
             alert('Customer added successfully!');
@@ -397,8 +397,12 @@
             const tbody = document.getElementById('customerTableBody');
             if(!tbody) return;
             tbody.innerHTML = '';
+            if(customers.length === 0) {
+                tbody.innerHTML = <tr><td colspan="3" class="text-center">No customers found.</td></tr>;
+                return;
+            }
             customers.forEach(c => {
-                tbody.innerHTML += <tr><td style="font-weight:500">${c.name}</td><td>${c.gstin}</td><td>${c.address}</td></tr>;
+                tbody.innerHTML += <tr><td style="font-weight:500">${c.name}</td><td>${c.gstin || '-'}</td><td>${c.address || '-'}</td></tr>;
             });
         }
 
@@ -406,14 +410,16 @@
             const desc = document.getElementById('prodDesc').value.trim();
             const hsn = document.getElementById('prodHsn').value.trim();
             const rate = parseFloat(document.getElementById('prodRate').value) || 0;
-            if(!desc) return alert('Enter description');
+            if(!desc) return alert('Please enter item description');
 
             let products = JSON.parse(localStorage.getItem('ee_products') || '[]');
             products.push({ desc, hsn, rate });
             localStorage.setItem('ee_products', JSON.stringify(products));
+            
             document.getElementById('prodDesc').value = '';
             document.getElementById('prodHsn').value = '';
             document.getElementById('prodRate').value = '';
+            
             renderProducts();
             alert('Product saved successfully!');
         }
@@ -423,29 +429,40 @@
             const tbody = document.getElementById('productTableBody');
             if(!tbody) return;
             tbody.innerHTML = '';
+            if(products.length === 0) {
+                tbody.innerHTML = <tr><td colspan="3" class="text-center">No products found.</td></tr>;
+                return;
+            }
             products.forEach(p => {
-                tbody.innerHTML += <tr><td style="font-weight:500">${p.desc}</td><td>${p.hsn}</td><td>₹${p.rate}</td></tr>;
+                tbody.innerHTML += <tr><td style="font-weight:500">${p.desc}</td><td>${p.hsn || '-'}</td><td>₹${p.rate.toFixed(2)}</td></tr>;
             });
         }
 
         function saveAndRecordInvoice() {
-            const invNo = document.getElementById('invNo').value;
+            const invNo = document.getElementById('invNo').value.trim();
             const date = document.getElementById('invDate').value;
-            const buyer = document.getElementById('buyerDetails').value;
+            const buyer = document.getElementById('buyerDetails').value.trim();
             const grandTotal = document.getElementById('grandTotalDisplay').innerText;
             const taxable = document.getElementById('subTotalDisplay').innerText;
             const tax = document.getElementById('totalTaxDisplay').innerText;
 
+            if(!invNo) return alert('Please enter Invoice Number');
+
             let invoices = JSON.parse(localStorage.getItem('ee_invoices') || '[]');
             invoices.push({ invNo, date, buyer, taxable, tax, grandTotal });
             localStorage.setItem('ee_invoices', JSON.stringify(invoices));
-            alert('Invoice successfully recorded into GSTR summary database!');
+            
+            alert('Invoice #' + invNo + ' successfully saved into GSTR Logs!');
         }
 
         function generateEWayBillJSON() {
-            const invNo = document.getElementById('invNo').value;
-            const invDate = document.getElementById('invDate').value.split('-').reverse().join('/');
+            const invNo = document.getElementById('invNo').value.trim();
+            const rawDate = document.getElementById('invDate').value;
+            if(!invNo || !rawDate) return alert('Please check Invoice No and Date before generating E-Way Bill JSON.');
             
+            const invDate = rawDate.split('-').reverse().join('/');
+            const grandTotalVal = parseFloat(document.getElementById('grandTotalDisplay').innerText.replace('₹','')) || 0;
+
             const ewayData = {
                 supplyType: "O",
                 subSupplyType: "1",
@@ -454,11 +471,11 @@
                 docDate: invDate,
                 fromGstin: "32AAGPX3837Q1ZZ",
                 fromTrdName: "EXCEL ELECTRICALS",
-                fromAddr1: "2/49, Aluva Munnar Road",
+                fromAddr1: "2/49, Aluva Munnar Road, Choondy",
                 fromPlace: "Aluva",
                 fromPincode: 683112,
                 fromStateCode: 32,
-                totInvValue: parseFloat(document.getElementById('grandTotalDisplay').innerText.replace('₹','')) || 0,
+                totInvValue: grandTotalVal,
                 transMode: "1",
                 transDistance: 25,
                 vehicleNo: "KL07XX0000"
@@ -479,23 +496,23 @@
             const gstr3bEl = document.getElementById('gstr3b-content');
             
             if(invoices.length === 0) {
-                if(gstr1El) gstr1El.innerHTML = "No saved invoices found for reporting period.";
+                if(gstr1El) gstr1El.innerHTML = "No saved invoices found in logs yet. Click 'Save Invoice to GSTR Logs' from the New Invoice tab.";
                 if(gstr3bEl) gstr3bEl.innerHTML = "No liability recorded yet.";
                 return;
             }
 
             let totalTaxableVal = 0;
             let totalTaxVal = 0;
-            let rowsHtml = <table><tr><th>Inv No</th><th>Date</th><th>Taxable Value</th><th>Tax Amount</th></tr>;
+            let rowsHtml = <div style="overflow-x:auto;"><table style="margin-top:8px;"><tr><th>Inv No</th><th>Date</th><th>Taxable Value</th><th>Tax Amount</th></tr>;
             
             invoices.forEach(inv => {
                 totalTaxableVal += parseFloat((inv.taxable || '0').replace('₹','')) || 0;
                 totalTaxVal += parseFloat((inv.tax || '0').replace('₹','')) || 0;
                 rowsHtml += <tr><td>${inv.invNo}</td><td>${inv.date}</td><td>${inv.taxable}</td><td>${inv.tax}</td></tr>;
             });
-            rowsHtml += </table>;
+            rowsHtml += </table></div>;
 
-            if(gstr1El) gstr1El.innerHTML = <p style="margin-bottom: 8px; font-weight:bold;">Total Outward Invoices Logged: ${invoices.length}</p> + rowsHtml;
+            if(gstr1El) gstr1El.innerHTML = <p style="margin-bottom: 4px; font-weight:bold;">Total Outward Invoices Logged: ${invoices.length}</p> + rowsHtml;
             if(gstr3bEl) gstr3bEl.innerHTML = `
                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <div>Total Taxable Outward Supplies: <b>₹${totalTaxableVal.toFixed(2)}</b></div>
@@ -503,8 +520,6 @@
                 </div>
             `;
         }
-
-        initApp();
     </script>
 </body>
 </html>
