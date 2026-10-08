@@ -3,216 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Electricals - Advanced Billing & GST Software</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Excel Electricals - ERP & Billing</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: #f1f5f9; color: #1e293b; padding-bottom: 40px; }
+        header { background: #0f172a; color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .header-title h1 { font-size: 18px; font-weight: bold; }
+        .header-title p { font-size: 12px; color: #94a3b8; }
+        .nav-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-btn { background: #334155; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .nav-btn.active { background: #2563eb; }
+        .nav-btn:hover { background: #475569; }
+        
+        main { max-width: 950px; margin: 25px auto; padding: 0 15px; }
+        .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .tab-content.active { display: block; }
+
+        /* Invoice Layout */
+        .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+        .shop-info h2 { color: #1d4ed8; font-size: 22px; margin-bottom: 4px; }
+        .shop-info p { font-size: 12px; color: #475569; line-height: 1.4; }
+        .inv-meta { text-align: right; }
+        .inv-meta h3 { font-size: 18px; color: #1e293b; margin-bottom: 8px; }
+        .inv-meta label { font-size: 12px; color: #64748b; display: inline-block; width: 80px; text-align: left; }
+        .inv-meta input { padding: 5px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; text-align: right; }
+
+        .customer-box { background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media(max-width: 700px) { .customer-box { grid-template-columns: 1fr; } }
+        .customer-box label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
+        .customer-box select, .customer-box textarea, .form-control { width: 100%; padding: 8px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 13px; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+        th { background: #e2e8f0; color: #334155; font-weight: bold; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        
+        table input, table select { width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 13px; }
+        .add-row-btn { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .add-row-btn:hover { background: #1e293b; }
+
+        .totals-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 2px solid #e2e8f0; padding-top: 15px; font-size: 13px; }
+        @media(max-width: 700px) { .totals-section { grid-template-columns: 1fr; } }
+        .bank-details p { font-size: 12px; color: #475569; line-height: 1.5; }
+        .declaration { margin-top: 10px; background: #f8fafc; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; color: #64748b; }
+        
+        .calculation-box { background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; }
+        .calc-row { display: flex; justify-content: space-between; color: #475569; }
+        .calc-row.grand { font-size: 15px; font-weight: bold; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; }
+        .calc-row.tax-total { font-weight: bold; color: #1e293b; border-top: 1px solid #cbd5e1; padding-top: 6px; }
+
+        .action-buttons { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .btn { padding: 10px 18px; border: none; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-save { background: #059669; }
+        .btn-save:hover { background: #047857; }
+        .btn-json { background: #d97706; }
+        .btn-json:hover { background: #b45309; }
+        .btn-print { background: #2563eb; }
+        .btn-print:hover { background: #1d4ed8; }
+
+        /* General Forms & Tables in other tabs */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; background: #f8fafc; padding: 15px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 20px; }
+        .form-grid input { padding: 8px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .form-grid button { grid-column: 1 / -1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        h2.section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+
         @media print {
-            .no-print { display: none !important; }
+            header, .no-print, .action-buttons, .add-row-btn { display: none !important; }
             body { background: white; padding: 0; }
-            .invoice-box { box-shadow: none; border: none; padding: 0; }
+            .tab-content { border: none; box-shadow: none; padding: 0; }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-12">
+<body>
 
-    <!-- Top Navigation Bar (Explicitly styled & visible) -->
-    <header class="bg-slate-900 text-white shadow-md no-print sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
-            <div>
-                <h1 class="text-lg font-bold">Excel Electricals - ERP & Billing</h1>
-                <p class="text-xs text-slate-400">GSTIN: 32AAGPX3837Q1ZZ | Choondy, Aluva</p>
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-container">
+            <div class="header-title">
+                <h1>Excel Electricals - ERP & Billing</h1>
+                <p>GSTIN: 32AAGPX3837Q1ZZ | Choondy, Aluva, Kerala</p>
             </div>
-            <div class="space-x-2 mt-2 sm:mt-0">
-                <button onclick="switchTab('billing')" id="btn-billing" class="px-3 py-1.5 text-sm bg-blue-600 rounded font-medium">New Invoice</button>
-                <button onclick="switchTab('customers')" id="btn-customers" class="px-3 py-1.5 text-sm bg-slate-700 rounded font-medium hover:bg-slate-600">Customers</button>
-                <button onclick="switchTab('products')" id="btn-products" class="px-3 py-1.5 text-sm bg-slate-700 rounded font-medium hover:bg-slate-600">Products/Services</button>
-                <button onclick="switchTab('gstr')" id="btn-gstr" class="px-3 py-1.5 text-sm bg-slate-700 rounded font-medium hover:bg-slate-600">GSTR Reports</button>
+            <div class="nav-buttons no-print">
+                <button onclick="switchTab('billing')" id="btn-billing" class="nav-btn active">New Invoice</button>
+                <button onclick="switchTab('customers')" id="btn-customers" class="nav-btn">Customers</button>
+                <button onclick="switchTab('products')" id="btn-products" class="nav-btn">Products/Services</button>
+                <button onclick="switchTab('gstr')" id="btn-gstr" class="nav-btn">GSTR Reports</button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto mt-6 px-4">
-
-        <!-- TAB 1: BILLING & INVOICE CREATION -->
-        <div id="tab-billing" class="tab-content">
-            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 invoice-box border border-slate-200">
-                
-                <!-- Header Info -->
-                <div class="border-b pb-4 mb-4 flex justify-between items-start">
-                    <div>
-                        <h2 class="text-xl font-bold text-blue-700">EXCEL ELECTRICALS</h2>
-                        <p class="text-xs text-slate-600">2/49, Aluva Munnar Road, Opp. Nest Building</p>
-                        <p class="text-xs text-slate-600">Choondy, Edathala - 683112, Ernakulam, Kerala</p>
-                        <p class="text-xs text-slate-600">Phone: 751014418, 8590259451</p>
-                        <p class="text-xs font-semibold text-slate-700 mt-1">GSTIN/UIN: 32AAGPX3837Q1ZZ</p>
-                    </div>
-                    <div class="text-right">
-                        <h3 class="text-lg font-bold text-slate-800">TAX INVOICE</h3>
-                        <div class="mt-2 text-xs">
-                            <span class="text-slate-500">Invoice No:</span>
-                            <input type="text" id="invNo" value="EE/2026-27/328" class="border px-2 py-1 rounded w-32 text-right font-medium">
-                        </div>
-                        <div class="mt-1 text-xs">
-                            <span class="text-slate-500">Date:</span>
-                            <input type="date" id="invDate" class="border px-2 py-1 rounded w-32 text-right">
-                        </div>
-                    </div>
+    <main>
+        <!-- TAB 1: BILLING & INVOICE -->
+        <div id="tab-billing" class="tab-content active">
+            <div class="inv-header">
+                <div class="shop-info">
+                    <h2>EXCEL ELECTRICALS</h2>
+                    <p>2/49, Aluva Munnar Road, Opp. Nest Building</p>
+                    <p>Choondy, Edathala - 683112, Ernakulam, Kerala</p>
+                    <p>Phone: 751014418, 8590259451</p>
+                    <p style="font-weight: bold; margin-top: 4px;">GSTIN/UIN: 32AAGPX3837Q1ZZ</p>
                 </div>
-
-                <!-- Customer Selection Section -->
-                <div class="mb-4 bg-slate-50 p-3 rounded border text-xs grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-bold text-slate-600 mb-1">Select / Search Customer:</label>
-                        <select id="selectCustomer" onchange="fillCustomer()" class="w-full border p-1.5 rounded bg-white font-medium">
-                            <option value="">-- Select Registered Customer --</option>
-                        </select>
+                <div class="inv-meta">
+                    <h3>TAX INVOICE</h3>
+                    <div style="margin-bottom: 6px;">
+                        <label>Invoice No:</label>
+                        <input type="text" id="invNo" value="EE/2026-27/01">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-600 mb-1">Buyer Details (Bill To):</label>
-                        <textarea id="buyerDetails" rows="2" class="w-full border p-1 rounded bg-white" placeholder="Customer Name, Address & GSTIN"></textarea>
+                        <label>Date:</label>
+                        <input type="date" id="invDate">
                     </div>
                 </div>
+            </div>
 
-                <!-- Items Table -->
-                <div class="overflow-x-auto mb-4">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-200 text-slate-700">
-                                <th class="p-2 border w-10 text-center">SI</th>
-                                <th class="p-2 border">Description of Goods / Service</th>
-                                <th class="p-2 border w-24">HSN/SAC</th>
-                                <th class="p-2 border w-16 text-center">Qnty</th>
-                                <th class="p-2 border w-24 text-right">Rate (₹)</th>
-                                <th class="p-2 border w-20 text-center">Tax %</th>
-                                <th class="p-2 border w-28 text-right">Amount (₹)</th>
-                                <th class="p-2 border w-10 text-center no-print">✕</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invoiceItems">
-                            <!-- Dynamic Rows -->
-                        </tbody>
-                    </table>
-                    <button onclick="addInvoiceRow()" class="mt-2 no-print bg-slate-800 text-white px-3 py-1.5 rounded text-xs hover:bg-slate-700">+ Add Line Item</button>
+            <!-- Customer Selection -->
+            <div class="customer-box">
+                <div>
+                    <label>Select Registered Customer:</label>
+                    <select id="selectCustomer" onchange="fillCustomer()">
+                        <option value="">-- Choose Customer --</option>
+                    </select>
                 </div>
+                <div>
+                    <label>Buyer Details (Bill To):</label>
+                    <textarea id="buyerDetails" rows="2" placeholder="Customer Name, Address & GSTIN"></textarea>
+                </div>
+            </div>
 
-                <!-- Totals & Tax Breakdowns -->
-                <div class="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <p class="font-bold text-slate-700">Bank Details:</p>
-                        <p>Bank Name: STATE BANK OF INDIA, ASOKAPURAM</p>
-                        <p>A/C NO: 43721477418</p>
-                        <p>IFSC CODE: SBIN0008596</p>
-                        <div class="mt-4 border p-2 bg-slate-50 rounded">
-                            <p class="font-bold">Declaration:</p>
-                            <p class="text-[10px] text-slate-600">We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
-                        </div>
-                    </div>
-                    <div class="space-y-1.5 bg-slate-50 p-3 rounded border">
-                        <div class="flex justify-between font-bold text-sm border-b pb-1">
-                            <span>Total Invoice Value:</span>
-                            <span id="grandTotalDisplay">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Taxable Value:</span>
-                            <span id="subTotalDisplay">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Central Tax (CGST 9%):</span>
-                            <span id="cgstDisplay">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>State Tax (SGST 9%):</span>
-                            <span id="sgstDisplay">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between font-semibold text-slate-800 border-t pt-1">
-                            <span>Total Tax Amount:</span>
-                            <span id="totalTaxDisplay">₹0.00</span>
-                        </div>
+            <!-- Items Table -->
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;" class="text-center">SI</th>
+                            <th>Description of Goods / Service</th>
+                            <th style="width: 90px;">HSN/SAC</th>
+                            <th style="width: 60px;" class="text-center">Qnty</th>
+                            <th style="width: 90px;" class="text-right">Rate (₹)</th>
+                            <th style="width: 75px;" class="text-center">Tax %</th>
+                            <th style="width: 100px;" class="text-right">Amount (₹)</th>
+                            <th style="width: 40px;" class="text-center no-print">✕</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceItems"></tbody>
+                </table>
+                <button onclick="addInvoiceRow()" class="add-row-btn no-print">+ Add Line Item</button>
+            </div>
+
+            <!-- Totals & Bank Details -->
+            <div class="totals-section">
+                <div class="bank-details">
+                    <p style="font-weight: bold; margin-bottom: 4px;">Bank Details:</p>
+                    <p><b>Bank Name:</b> STATE BANK OF INDIA, ASOKAPURAM</p>
+                    <p><b>A/C NO:</b> 43721477418</p>
+                    <p><b>IFSC CODE:</b> SBIN0008596</p>
+                    <div class="declaration">
+                        <b>Declaration:</b> We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.
                     </div>
                 </div>
-
-                <!-- Action Buttons -->
-                <div class="mt-6 flex flex-wrap justify-end gap-3 no-print border-t pt-4">
-                    <button onclick="saveAndRecordInvoice()" class="bg-emerald-600 text-white px-4 py-2 rounded text-xs font-bold hover:bg-emerald-700">Save Invoice to GSTR Logs</button>
-                    <button onclick="generateEWayBillJSON()" class="bg-amber-600 text-white px-4 py-2 rounded text-xs font-bold hover:bg-amber-700">Generate E-Way Bill JSON</button>
-                    <button onclick="window.print()" class="bg-blue-600 text-white px-5 py-2 rounded text-xs font-bold hover:bg-blue-700">Print / Save PDF</button>
+                <div class="calculation-box">
+                    <div class="calc-row grand">
+                        <span>Total Invoice Value:</span>
+                        <span id="grandTotalDisplay">₹0.00</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Taxable Value:</span>
+                        <span id="subTotalDisplay">₹0.00</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>Central Tax (CGST):</span>
+                        <span id="cgstDisplay">₹0.00</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>State Tax (SGST):</span>
+                        <span id="sgstDisplay">₹0.00</span>
+                    </div>
+                    <div class="calc-row tax-total">
+                        <span>Total Tax Amount:</span>
+                        <span id="totalTaxDisplay">₹0.00</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-buttons no-print">
+                <button onclick="saveAndRecordInvoice()" class="btn btn-save">Save Invoice to GSTR Logs</button>
+                <button onclick="generateEWayBillJSON()" class="btn btn-json">Generate E-Way Bill JSON</button>
+                <button onclick="window.print()" class="btn btn-print">Print / Save PDF</button>
             </div>
         </div>
 
-        <!-- TAB 2: CUSTOMER DIRECTORY -->
-        <div id="tab-customers" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-bold mb-4">Customer Directory</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 bg-slate-50 p-4 rounded border">
-                    <input type="text" id="newCustName" placeholder="Customer / Business Name" class="border p-2 rounded text-xs">
-                    <input type="text" id="newCustGst" placeholder="GSTIN (e.g. 32AACCA6248B1Z9)" class="border p-2 rounded text-xs uppercase">
-                    <input type="text" id="newCustAddress" placeholder="Address & City" class="border p-2 rounded text-xs">
-                    <button onclick="addCustomer()" class="col-span-full bg-blue-600 text-white py-2 rounded text-xs font-bold">Add Customer to Database</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-200">
-                                <th class="p-2 border">Customer Name</th>
-                                <th class="p-2 border">GSTIN</th>
-                                <th class="p-2 border">Address</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customerTableBody"></tbody>
-                    </table>
-                </div>
+        <!-- TAB 2: CUSTOMERS -->
+        <div id="tab-customers" class="tab-content">
+            <h2 class="section-title">Customer Directory</h2>
+            <div class="form-grid">
+                <input type="text" id="newCustName" placeholder="Customer / Business Name">
+                <input type="text" id="newCustGst" placeholder="GSTIN (e.g. 32AACCA6248B1Z9)">
+                <input type="text" id="newCustAddress" placeholder="Address & City">
+                <button onclick="addCustomer()">Add Customer to Database</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>GSTIN</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody"></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- TAB 3: PRODUCT & SERVICE MASTER -->
-        <div id="tab-products" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-bold mb-4">Product & Service Master (Rewinding/Spares)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 bg-slate-50 p-4 rounded border">
-                    <input type="text" id="prodDesc" placeholder="Item Description (e.g., Ceiling Fan Rewinding)" class="border p-2 rounded text-xs md:col-span-2">
-                    <input type="text" id="prodHsn" placeholder="HSN/SAC Code (e.g. 995469)" class="border p-2 rounded text-xs">
-                    <input type="number" id="prodRate" placeholder="Standard Rate (₹)" class="border p-2 rounded text-xs">
-                    <button onclick="addProduct()" class="col-span-full bg-blue-600 text-white py-2 rounded text-xs font-bold">Save Product / Service</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-200">
-                                <th class="p-2 border">Description</th>
-                                <th class="p-2 border">HSN/SAC</th>
-                                <th class="p-2 border">Default Rate (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody"></tbody>
-                    </table>
-                </div>
+        <!-- TAB 3: PRODUCTS -->
+        <div id="tab-products" class="tab-content">
+            <h2 class="section-title">Product & Service Master (Rewinding/Spares)</h2>
+            <div class="form-grid">
+                <input type="text" id="prodDesc" placeholder="Item Description (e.g., Ceiling Fan Rewinding)" style="grid-column: span 2;">
+                <input type="text" id="prodHsn" placeholder="HSN/SAC Code (e.g. 995469)">
+                <input type="number" id="prodRate" placeholder="Standard Rate (₹)">
+                <button onclick="addProduct()">Save Product / Service</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>HSN/SAC</th>
+                            <th>Default Rate (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
             </div>
         </div>
 
         <!-- TAB 4: GSTR REPORTS -->
-        <div id="tab-gstr" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow p-6 space-y-6">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h2 class="text-lg font-bold text-slate-800">GST Return Filing Summaries</h2>
-                    <button onclick="loadGSTRData()" class="bg-slate-800 text-white px-3 py-1.5 rounded text-xs">Refresh Calculations</button>
-                </div>
-
-                <div class="border rounded p-4 bg-slate-50">
-                    <h3 class="font-bold text-blue-700 text-sm mb-2">GSTR-1 Summary (Outward Supplies)</h3>
-                    <div id="gstr1-content" class="text-xs text-slate-700">No saved invoices found for reporting period.</div>
-                </div>
-
-                <div class="border rounded p-4 bg-slate-50">
-                    <h3 class="font-bold text-blue-700 text-sm mb-2">GSTR-3B Monthly Tax Liability Summary</h3>
-                    <div id="gstr3b-content" class="text-xs text-slate-700">No liability recorded yet.</div>
-                </div>
+        <div id="tab-gstr" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 class="section-title" style="border:none; margin:0;">GST Return Filing Summaries</h2>
+                <button onclick="loadGSTRData()" class="add-row-btn">Refresh Data</button>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <h3 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">GSTR-1 Summary (Outward Supplies)</h3>
+                <div id="gstr1-content" style="font-size: 13px; color: #475569;">No saved invoices found for reporting period.</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px;">
+                <h3 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">GSTR-3B Monthly Tax Liability Summary</h3>
+                <div id="gstr3b-content" style="font-size: 13px; color: #475569;">No liability recorded yet.</div>
             </div>
         </div>
-
     </main>
 
     <script>
+        // Initialize Default Storage
         if (!localStorage.getItem('ee_customers')) {
             localStorage.setItem('ee_customers', JSON.stringify([
                 { name: "ALAMPALLY BROTHERS LTD", gstin: "32AACCA6248B1Z9", address: "Manalimukku, Naval Armament Depot P.O, Aluva-683563" }
@@ -229,23 +277,18 @@
             localStorage.setItem('ee_invoices', JSON.stringify([]));
         }
 
-        if(document.getElementById('invDate')) {
-            document.getElementById('invDate').valueAsDate = new Date();
-        }
+        const dateInput = document.getElementById('invDate');
+        if(dateInput) dateInput.valueAsDate = new Date();
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('header button').forEach(el => {
-                el.classList.remove('bg-blue-600');
-                el.classList.add('bg-slate-700');
-            });
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
             const targetTab = document.getElementById('tab-' + tabId);
             const targetBtn = document.getElementById('btn-' + tabId);
-            if(targetTab) targetTab.classList.remove('hidden');
-            if(targetBtn) {
-                targetBtn.classList.remove('bg-slate-700');
-                targetBtn.classList.add('bg-blue-600');
-            }
+            
+            if(targetTab) targetTab.classList.add('active');
+            if(targetBtn) targetBtn.classList.add('active');
 
             if(tabId === 'customers') renderCustomers();
             if(tabId === 'products') renderProducts();
@@ -256,14 +299,14 @@
             const customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             const select = document.getElementById('selectCustomer');
             if(select) {
-                select.innerHTML = '<option value="">-- Select Registered Customer --</option>';
+                select.innerHTML = '<option value="">-- Choose Customer --</option>';
                 customers.forEach((c, idx) => {
                     select.innerHTML += <option value="${idx}">${c.name} (${c.gstin})</option>;
                 });
             }
             const tbody = document.getElementById('invoiceItems');
             if(tbody && tbody.rows.length === 0) {
-                addInvoiceRow('Ceiling fan rewinding & bearing change', '995469', 3, 600, 18);
+                addInvoiceRow('Ceiling fan rewinding & bearing change', '995469', 1, 600, 18);
             }
         }
 
@@ -283,21 +326,21 @@
             const rowCount = tbody.rows.length + 1;
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="p-2 border text-center">${rowCount}</td>
-                <td class="p-2 border"><input type="text" value="${desc}" class="w-full border p-1 rounded item-desc"></td>
-                <td class="p-2 border"><input type="text" value="${hsn}" class="w-full border p-1 rounded item-hsn"></td>
-                <td class="p-2 border"><input type="number" value="${qty}" min="1" oninput="calculateTotals()" class="w-full border p-1 rounded item-qty text-center"></td>
-                <td class="p-2 border"><input type="number" value="${rate}" step="0.01" oninput="calculateTotals()" class="w-full border p-1 rounded item-rate text-right"></td>
-                <td class="p-2 border text-center">
-                    <select onchange="calculateTotals()" class="border p-1 rounded item-tax text-xs">
+                <td class="text-center">${rowCount}</td>
+                <td><input type="text" value="${desc}" class="item-desc"></td>
+                <td><input type="text" value="${hsn}" class="item-hsn"></td>
+                <td class="text-center"><input type="number" value="${qty}" min="1" oninput="calculateTotals()" class="item-qty text-center"></td>
+                <td class="text-right"><input type="number" value="${rate}" step="0.01" oninput="calculateTotals()" class="item-rate text-right"></td>
+                <td class="text-center">
+                    <select onchange="calculateTotals()" class="item-tax">
                         <option value="18" ${tax==18?'selected':''}>18%</option>
                         <option value="12" ${tax==12?'selected':''}>12%</option>
                         <option value="5" ${tax==5?'selected':''}>5%</option>
                         <option value="0" ${tax==0?'selected':''}>0%</option>
                     </select>
                 </td>
-                <td class="p-2 border text-right font-semibold item-amount">₹0.00</td>
-                <td class="p-2 border text-center no-print"><button onclick="this.closest('tr').remove(); calculateTotals();" class="text-red-600 font-bold">✕</button></td>
+                <td class="text-right item-amount" style="font-weight: bold;">₹0.00</td>
+                <td class="text-center no-print"><button onclick="this.closest('tr').remove(); calculateTotals();" style="background:none; border:none; color:#dc2626; font-weight:bold; cursor:pointer;">✕</button></td>
             `;
             tbody.appendChild(row);
             calculateTotals();
@@ -355,7 +398,7 @@
             if(!tbody) return;
             tbody.innerHTML = '';
             customers.forEach(c => {
-                tbody.innerHTML += <tr><td class="p-2 border font-medium">${c.name}</td><td class="p-2 border">${c.gstin}</td><td class="p-2 border">${c.address}</td></tr>;
+                tbody.innerHTML += <tr><td style="font-weight:500">${c.name}</td><td>${c.gstin}</td><td>${c.address}</td></tr>;
             });
         }
 
@@ -381,7 +424,7 @@
             if(!tbody) return;
             tbody.innerHTML = '';
             products.forEach(p => {
-                tbody.innerHTML += <tr><td class="p-2 border font-medium">${p.desc}</td><td class="p-2 border">${p.hsn}</td><td class="p-2 border">₹${p.rate}</td></tr>;
+                tbody.innerHTML += <tr><td style="font-weight:500">${p.desc}</td><td>${p.hsn}</td><td>₹${p.rate}</td></tr>;
             });
         }
 
@@ -415,12 +458,6 @@
                 fromPlace: "Aluva",
                 fromPincode: 683112,
                 fromStateCode: 32,
-                toGstin: "32AACCA6248B1Z9",
-                toTrdName: "Customer / Recipient",
-                toAddr1: "Ernakulam",
-                toPlace: "Ernakulam",
-                toPincode: 683101,
-                toStateCode: 32,
                 totInvValue: parseFloat(document.getElementById('grandTotalDisplay').innerText.replace('₹','')) || 0,
                 transMode: "1",
                 transDistance: 25,
@@ -449,20 +486,20 @@
 
             let totalTaxableVal = 0;
             let totalTaxVal = 0;
-            let rowsHtml = <table class="w-full border mt-2"><tr class="bg-slate-200"><th class="p-1 border">Inv No</th><th class="p-1 border">Date</th><th class="p-1 border">Taxable</th><th class="p-1 border">Tax</th></tr>;
+            let rowsHtml = <table><tr><th>Inv No</th><th>Date</th><th>Taxable Value</th><th>Tax Amount</th></tr>;
             
             invoices.forEach(inv => {
                 totalTaxableVal += parseFloat((inv.taxable || '0').replace('₹','')) || 0;
                 totalTaxVal += parseFloat((inv.tax || '0').replace('₹','')) || 0;
-                rowsHtml += <tr><td class="p-1 border">${inv.invNo}</td><td class="p-1 border">${inv.date}</td><td class="p-1 border">${inv.taxable}</td><td class="p-1 border">${inv.tax}</td></tr>;
+                rowsHtml += <tr><td>${inv.invNo}</td><td>${inv.date}</td><td>${inv.taxable}</td><td>${inv.tax}</td></tr>;
             });
             rowsHtml += </table>;
 
-            if(gstr1El) gstr1El.innerHTML = <p class="mb-2 font-semibold">Total Outward B2B / B2CS Invoices logged: ${invoices.length}</p> + rowsHtml;
+            if(gstr1El) gstr1El.innerHTML = <p style="margin-bottom: 8px; font-weight:bold;">Total Outward Invoices Logged: ${invoices.length}</p> + rowsHtml;
             if(gstr3bEl) gstr3bEl.innerHTML = `
-                <div class="grid grid-cols-2 gap-2">
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <div>Total Taxable Outward Supplies: <b>₹${totalTaxableVal.toFixed(2)}</b></div>
-                    <div>Total Central / State Tax Payable: <b>₹${totalTaxVal.toFixed(2)}</b> (CGST: ₹${(totalTaxVal/2).toFixed(2)} | SGST: ₹${(totalTaxVal/2).toFixed(2)})</div>
+                    <div>Total Tax Payable: <b>₹${totalTaxVal.toFixed(2)}</b> (CGST: ₹${(totalTaxVal/2).toFixed(2)} | SGST: ₹${(totalTaxVal/2).toFixed(2)})</div>
                 </div>
             `;
         }
@@ -470,4 +507,4 @@
         initApp();
     </script>
 </body>
-</htm
+</html>
