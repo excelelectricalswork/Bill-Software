@@ -227,7 +227,6 @@
     </main>
 
     <script>
-        // Initial Mock Data setup if empty
         if (!localStorage.getItem('ee_customers')) {
             localStorage.setItem('ee_customers', JSON.stringify([
                 { name: "ALAMPALLY BROTHERS LTD", gstin: "32AACCA6248B1Z9", address: "Manalimukku, Naval Armament Depot P.O, Aluva-683563" }
@@ -261,7 +260,6 @@
             if(tabId === 'gstr') loadGSTRData();
         }
 
-        // Populate dropdowns
         function initApp() {
             const customers = JSON.parse(localStorage.getItem('ee_customers'));
             const select = document.getElementById('selectCustomer');
@@ -334,7 +332,6 @@
             document.getElementById('grandTotalDisplay').innerText = ₹${grandTotal.toFixed(2)};
         }
 
-        // Customer management
         function addCustomer() {
             const name = document.getElementById('newCustName').value.trim();
             const gstin = document.getElementById('newCustGst').value.trim();
@@ -361,7 +358,6 @@
             });
         }
 
-        // Product management
         function addProduct() {
             const desc = document.getElementById('prodDesc').value.trim();
             const hsn = document.getElementById('prodHsn').value.trim();
@@ -387,7 +383,6 @@
             });
         }
 
-        // Save Invoice for GSTR Records
         function saveAndRecordInvoice() {
             const invNo = document.getElementById('invNo').value;
             const date = document.getElementById('invDate').value;
@@ -402,7 +397,6 @@
             alert('Invoice successfully recorded into GSTR summary database!');
         }
 
-        // E-Way Bill JSON Generation
         function generateEWayBillJSON() {
             const invNo = document.getElementById('invNo').value;
             const invDate = document.getElementById('invDate').value.split('-').reverse().join('/');
@@ -440,10 +434,13 @@
             dlAnchor.remove();
         }
 
-        // GSTR Reports loader
         function loadGSTRData() {
             const invoices = JSON.parse(localStorage.getItem('ee_invoices'));
-            if(invoices.length === 0) return;
+            if(invoices.length === 0) {
+                document.getElementById('gstr1-content').innerHTML = "No saved invoices found for reporting period.";
+                document.getElementById('gstr3b-content').innerHTML = "No liability recorded yet.";
+                return;
+            }
 
             let totalTaxableVal = 0;
             let totalTaxVal = 0;
@@ -460,7 +457,7 @@
             document.getElementById('gstr3b-content').innerHTML = `
                 <div class="grid grid-cols-2 gap-2">
                     <div>Total Taxable Outward Supplies: <b>₹${totalTaxableVal.toFixed(2)}</b></div>
-                    <div>Total Integrated / Central / State Tax Payable: <b>₹${totalTaxVal.toFixed(2)}</b> (CGST: ₹${(totalTaxVal/2).toFixed(2)} | SGST: ₹${(totalTaxVal/2).toFixed(2)})</div>
+                    <div>Total Central / State Tax Payable: <b>₹${totalTaxVal.toFixed(2)}</b> (CGST: ₹${(totalTaxVal/2).toFixed(2)} | SGST: ₹${(totalTaxVal/2).toFixed(2)})</div>
                 </div>
             `;
         }
