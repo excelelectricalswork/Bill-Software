@@ -21,9 +21,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: var(--bg-main); color: var(--text-main); padding-bottom: 50px; }
 
-        /* Security PIN Overlay */
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 99999; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: white; padding: 35px; border-radius: 12px; width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+       
 
         /* Header & Navigation */
         header { background: var(--primary); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -91,17 +89,7 @@
 </head>
 <body>
 
-    <!-- SECURE PIN LOGIN OVERLAY -->
-    <div id="loginOverlay">
-        <div class="login-box">
-            <h3 style="color: var(--primary); margin-bottom: 5px;">EXCEL ELECTRICALS</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">Secure Workshop ERP & Billing</p>
-            <label>Enter Security PIN / Password:</label>
-            <input type="password" id="loginPin" value="1234" style="text-align: center; font-size: 18px; letter-spacing: 5px;" placeholder="••••">
-            <button class="btn btn-primary" onclick="verifyPin()" style="width: 100%; justify-content: center; margin-top: 5px;">🔒 Login to ERP</button>
-            <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px;">Default PIN: <b>1234</b></p>
-        </div>
-    </div>
+    
 
     <header>
         <div class="brand">
