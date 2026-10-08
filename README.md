@@ -4,61 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excel Electricals - Secure Workshop ERP & Billing</title>
-    // Cleaned metadata (removed <WebsiteContent_...> wrappers)
-let edge_all_open_tabs = [
-  {
-    pageTitle: "Editing Bill-Software/README.md at main · excelelectricalswork/Bill-Software",
-    pageUrl: "https://github.com/excelelectricalswork/Bill-Software/edit/main/README.md",
-    tabId: 12081739,
-    isCurrent: true
-  },
-  {
-    pageTitle: "Bill-Software",
-    pageUrl: "https://excelelectricalswork.github.io/Bill-Software",
-    tabId: 12081776,
-    isCurrent: false
-  }
-];
-
-// Function to get the current active tab
-function getActiveTab() {
-  return edge_all_open_tabs.find(tab => tab.isCurrent);
-}
-
-// Function to set a new active tab
-function setActiveTab(tabId) {
-  edge_all_open_tabs.forEach(tab => {
-    tab.isCurrent = (tab.tabId === tabId);
-  });
-}
-
-// Function to list all tabs
-function listTabs() {
-  return edge_all_open_tabs.map(tab => ({
-    id: tab.tabId,
-    title: tab.pageTitle,
-    url: tab.pageUrl,
-    active: tab.isCurrent
-  }));
-}
-
-// Auto-update simulation: check and log active tab every 3 seconds
-setInterval(() => {
-  console.log("Active tab:", getActiveTab());
-  console.log("All tabs:", listTabs());
-}, 3000);
-
-// Example: automatically switch active tab every 6 seconds
-let toggle = true;
-setInterval(() => {
-  if (toggle) {
-    setActiveTab(12081776); // switch to second tab
-  } else {
-    setActiveTab(12081739); // switch back to first tab
-  }
-  toggle = !toggle;
-}, 6000);
-
+ 
     <style>
         :root {
             --primary: #1e3a8a;
