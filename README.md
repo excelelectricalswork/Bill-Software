@@ -15,8 +15,8 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-12">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-slate-900 text-white shadow-md no-print">
+    <!-- Top Navigation Bar (Explicitly styled & visible) -->
+    <header class="bg-slate-900 text-white shadow-md no-print sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
             <div>
                 <h1 class="text-lg font-bold">Excel Electricals - ERP & Billing</h1>
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <!-- Items Table matching official layout -->
+                <!-- Items Table -->
                 <div class="overflow-x-auto mb-4">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -190,7 +190,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: GSTR REPORTS (1, 2, 3B, 4) -->
+        <!-- TAB 4: GSTR REPORTS -->
         <div id="tab-gstr" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow p-6 space-y-6">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -198,28 +198,14 @@
                     <button onclick="loadGSTRData()" class="bg-slate-800 text-white px-3 py-1.5 rounded text-xs">Refresh Calculations</button>
                 </div>
 
-                <!-- GSTR-1 Summary -->
                 <div class="border rounded p-4 bg-slate-50">
-                    <h3 class="font-bold text-blue-700 text-sm mb-2">GSTR-1 Summary (Outward Supplies to Registered & Consumers)</h3>
+                    <h3 class="font-bold text-blue-700 text-sm mb-2">GSTR-1 Summary (Outward Supplies)</h3>
                     <div id="gstr1-content" class="text-xs text-slate-700">No saved invoices found for reporting period.</div>
                 </div>
 
-                <!-- GSTR-3B Summary -->
                 <div class="border rounded p-4 bg-slate-50">
                     <h3 class="font-bold text-blue-700 text-sm mb-2">GSTR-3B Monthly Tax Liability Summary</h3>
                     <div id="gstr3b-content" class="text-xs text-slate-700">No liability recorded yet.</div>
-                </div>
-
-                <!-- GSTR-2 & GSTR-4 Info -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="border rounded p-4 bg-slate-50 text-xs">
-                        <h4 class="font-bold text-slate-700 mb-1">GSTR-2 (Inward Supplies / Purchase Credit)</h4>
-                        <p class="text-slate-500">Tracks component purchases (copper wire, bearings) for Input Tax Credit (ITC) reconciliation.</p>
-                    </div>
-                    <div class="border rounded p-4 bg-slate-50 text-xs">
-                        <h4 class="font-bold text-slate-700 mb-1">GSTR-4 (Composition / Annual Details)</h4>
-                        <p class="text-slate-500">Applicable if registered under composite schemes; regular returns use GSTR-1 & 3B logs above.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -243,7 +229,9 @@
             localStorage.setItem('ee_invoices', JSON.stringify([]));
         }
 
-        document.getElementById('invDate').valueAsDate = new Date();
+        if(document.getElementById('invDate')) {
+            document.getElementById('invDate').valueAsDate = new Date();
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -251,9 +239,13 @@
                 el.classList.remove('bg-blue-600');
                 el.classList.add('bg-slate-700');
             });
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.remove('bg-slate-700');
-            document.getElementById('btn-' + tabId).classList.add('bg-blue-600');
+            const targetTab = document.getElementById('tab-' + tabId);
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if(targetTab) targetTab.classList.remove('hidden');
+            if(targetBtn) {
+                targetBtn.classList.remove('bg-slate-700');
+                targetBtn.classList.add('bg-blue-600');
+            }
 
             if(tabId === 'customers') renderCustomers();
             if(tabId === 'products') renderProducts();
@@ -261,25 +253,33 @@
         }
 
         function initApp() {
-            const customers = JSON.parse(localStorage.getItem('ee_customers'));
+            const customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             const select = document.getElementById('selectCustomer');
-            select.innerHTML = '<option value="">-- Select Registered Customer --</option>';
-            customers.forEach((c, idx) => {
-                select.innerHTML += <option value="${idx}">${c.name} (${c.gstin})</option>;
-            });
-            addInvoiceRow('Ceiling fan rewinding & bearing change', '995469', 3, 600, 18);
+            if(select) {
+                select.innerHTML = '<option value="">-- Select Registered Customer --</option>';
+                customers.forEach((c, idx) => {
+                    select.innerHTML += <option value="${idx}">${c.name} (${c.gstin})</option>;
+                });
+            }
+            const tbody = document.getElementById('invoiceItems');
+            if(tbody && tbody.rows.length === 0) {
+                addInvoiceRow('Ceiling fan rewinding & bearing change', '995469', 3, 600, 18);
+            }
         }
 
         function fillCustomer() {
             const idx = document.getElementById('selectCustomer').value;
             if(idx === "") return;
-            const customers = JSON.parse(localStorage.getItem('ee_customers'));
+            const customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             const c = customers[idx];
-            document.getElementById('buyerDetails').value = ${c.name}\n${c.address}\nGSTIN/UIN: ${c.gstin}\nState Name: Kerala, Code: 32;
+            if(c) {
+                document.getElementById('buyerDetails').value = ${c.name}\n${c.address}\nGSTIN/UIN: ${c.gstin}\nState Name: Kerala, Code: 32;
+            }
         }
 
         function addInvoiceRow(desc='', hsn='995469', qty=1, rate=0, tax=18) {
             const tbody = document.getElementById('invoiceItems');
+            if(!tbody) return;
             const rowCount = tbody.rows.length + 1;
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -325,11 +325,11 @@
             const cgst = totalTax / 2;
             const sgst = totalTax / 2;
 
-            document.getElementById('subTotalDisplay').innerText = ₹${subtotal.toFixed(2)};
-            document.getElementById('cgstDisplay').innerText = ₹${cgst.toFixed(2)};
-            document.getElementById('sgstDisplay').innerText = ₹${sgst.toFixed(2)};
-            document.getElementById('totalTaxDisplay').innerText = ₹${totalTax.toFixed(2)};
-            document.getElementById('grandTotalDisplay').innerText = ₹${grandTotal.toFixed(2)};
+            if(document.getElementById('subTotalDisplay')) document.getElementById('subTotalDisplay').innerText = ₹${subtotal.toFixed(2)};
+            if(document.getElementById('cgstDisplay')) document.getElementById('cgstDisplay').innerText = ₹${cgst.toFixed(2)};
+            if(document.getElementById('sgstDisplay')) document.getElementById('sgstDisplay').innerText = ₹${sgst.toFixed(2)};
+            if(document.getElementById('totalTaxDisplay')) document.getElementById('totalTaxDisplay').innerText = ₹${totalTax.toFixed(2)};
+            if(document.getElementById('grandTotalDisplay')) document.getElementById('grandTotalDisplay').innerText = ₹${grandTotal.toFixed(2)};
         }
 
         function addCustomer() {
@@ -338,7 +338,7 @@
             const address = document.getElementById('newCustAddress').value.trim();
             if(!name) return alert('Enter customer name');
             
-            let customers = JSON.parse(localStorage.getItem('ee_customers'));
+            let customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             customers.push({ name, gstin, address });
             localStorage.setItem('ee_customers', JSON.stringify(customers));
             document.getElementById('newCustName').value = '';
@@ -350,8 +350,9 @@
         }
 
         function renderCustomers() {
-            const customers = JSON.parse(localStorage.getItem('ee_customers'));
+            const customers = JSON.parse(localStorage.getItem('ee_customers') || '[]');
             const tbody = document.getElementById('customerTableBody');
+            if(!tbody) return;
             tbody.innerHTML = '';
             customers.forEach(c => {
                 tbody.innerHTML += <tr><td class="p-2 border font-medium">${c.name}</td><td class="p-2 border">${c.gstin}</td><td class="p-2 border">${c.address}</td></tr>;
@@ -364,7 +365,7 @@
             const rate = parseFloat(document.getElementById('prodRate').value) || 0;
             if(!desc) return alert('Enter description');
 
-            let products = JSON.parse(localStorage.getItem('ee_products'));
+            let products = JSON.parse(localStorage.getItem('ee_products') || '[]');
             products.push({ desc, hsn, rate });
             localStorage.setItem('ee_products', JSON.stringify(products));
             document.getElementById('prodDesc').value = '';
@@ -375,8 +376,9 @@
         }
 
         function renderProducts() {
-            const products = JSON.parse(localStorage.getItem('ee_products'));
+            const products = JSON.parse(localStorage.getItem('ee_products') || '[]');
             const tbody = document.getElementById('productTableBody');
+            if(!tbody) return;
             tbody.innerHTML = '';
             products.forEach(p => {
                 tbody.innerHTML += <tr><td class="p-2 border font-medium">${p.desc}</td><td class="p-2 border">${p.hsn}</td><td class="p-2 border">₹${p.rate}</td></tr>;
@@ -391,7 +393,7 @@
             const taxable = document.getElementById('subTotalDisplay').innerText;
             const tax = document.getElementById('totalTaxDisplay').innerText;
 
-            let invoices = JSON.parse(localStorage.getItem('ee_invoices'));
+            let invoices = JSON.parse(localStorage.getItem('ee_invoices') || '[]');
             invoices.push({ invNo, date, buyer, taxable, tax, grandTotal });
             localStorage.setItem('ee_invoices', JSON.stringify(invoices));
             alert('Invoice successfully recorded into GSTR summary database!');
@@ -435,10 +437,13 @@
         }
 
         function loadGSTRData() {
-            const invoices = JSON.parse(localStorage.getItem('ee_invoices'));
+            const invoices = JSON.parse(localStorage.getItem('ee_invoices') || '[]');
+            const gstr1El = document.getElementById('gstr1-content');
+            const gstr3bEl = document.getElementById('gstr3b-content');
+            
             if(invoices.length === 0) {
-                document.getElementById('gstr1-content').innerHTML = "No saved invoices found for reporting period.";
-                document.getElementById('gstr3b-content').innerHTML = "No liability recorded yet.";
+                if(gstr1El) gstr1El.innerHTML = "No saved invoices found for reporting period.";
+                if(gstr3bEl) gstr3bEl.innerHTML = "No liability recorded yet.";
                 return;
             }
 
@@ -447,14 +452,14 @@
             let rowsHtml = <table class="w-full border mt-2"><tr class="bg-slate-200"><th class="p-1 border">Inv No</th><th class="p-1 border">Date</th><th class="p-1 border">Taxable</th><th class="p-1 border">Tax</th></tr>;
             
             invoices.forEach(inv => {
-                totalTaxableVal += parseFloat(inv.taxable.replace('₹','')) || 0;
-                totalTaxVal += parseFloat(inv.tax.replace('₹','')) || 0;
+                totalTaxableVal += parseFloat((inv.taxable || '0').replace('₹','')) || 0;
+                totalTaxVal += parseFloat((inv.tax || '0').replace('₹','')) || 0;
                 rowsHtml += <tr><td class="p-1 border">${inv.invNo}</td><td class="p-1 border">${inv.date}</td><td class="p-1 border">${inv.taxable}</td><td class="p-1 border">${inv.tax}</td></tr>;
             });
             rowsHtml += </table>;
 
-            document.getElementById('gstr1-content').innerHTML = <p class="mb-2 font-semibold">Total Outward B2B / B2CS Invoices logged: ${invoices.length}</p> + rowsHtml;
-            document.getElementById('gstr3b-content').innerHTML = `
+            if(gstr1El) gstr1El.innerHTML = <p class="mb-2 font-semibold">Total Outward B2B / B2CS Invoices logged: ${invoices.length}</p> + rowsHtml;
+            if(gstr3bEl) gstr3bEl.innerHTML = `
                 <div class="grid grid-cols-2 gap-2">
                     <div>Total Taxable Outward Supplies: <b>₹${totalTaxableVal.toFixed(2)}</b></div>
                     <div>Total Central / State Tax Payable: <b>₹${totalTaxVal.toFixed(2)}</b> (CGST: ₹${(totalTaxVal/2).toFixed(2)} | SGST: ₹${(totalTaxVal/2).toFixed(2)})</div>
@@ -465,4 +470,4 @@
         initApp();
     </script>
 </body>
-</html>
+</htm
