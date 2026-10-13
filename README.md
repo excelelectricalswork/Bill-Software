@@ -56,3 +56,49 @@ style.css
 
 <script src="appbody>
 </html>
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:20px;
+}
+
+.invoice{
+background:white;
+padding:20px;
+max-width:1000px;
+margin:auto;
+}
+
+.header{
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+table,th,td{
+border:1px solid #000;
+}
+
+th,td{
+padding:8px;
+}
+
+input{
+width:100%;
+padding:8px;
+margin:5px 0;
+}
+
+button{
+padding:10px 15px;
+margin:5px;
+cursor:pointer;
+}
+
+.bank{
+margin-top:20px;
+}
