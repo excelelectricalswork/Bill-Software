@@ -112,3 +112,13 @@ reports.htmlReports</a>
 
 </body>
 </html>
+✅ Auto Invoice Number
+✅ GST 18%
+✅ PDF Download
+✅ Save Data LocalStorage
+✅ Customer Database
+✅ Product Database
+✅ Sales History
+✅ Print Invoice
+✅ Mobile App Install (PWA)
+✅ Offline Working
