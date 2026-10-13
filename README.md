@@ -3,320 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Excel Electricals ERP</title>
 
-style.css
-</head>
+<title>Excel Electricals Billing Software</title>
 
-<body>
-
-<div class="sidebar">
-<h2>EXCEL ELECTRICALS</h2>
-
-index.htmlDashboard</a>
-invoice.htmlGST Invoice</a>
-customers.htmlCustomers</a>
-products.htmlProducts</a>
-reports.htmlReports</a>
-</div>
-
-<div class="content">
-
-<h1>Dashboard</h1>
-
-<div class="cards">
-
-<div class="card">
-<h3>Total Sales</h3>
-<h2 id="sales">₹0</h2>
-</div>
-
-<div class="card">
-<h3>Customers</h3>
-<h2 id="customers">0</h2>
-</div>
-
-<div class="card">
-<h3>Products</h3>
-<h2 id="products">0</h2>
-</div>
-
-</div>
-
-</div>
-
-app.jsscript>
-
-</body>
-</html>
-body{
+<style>
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Segoe UI,sans-serif;
-background:#f5f7fa;
 }
 
-.sidebar{
-width:250px;
-height:100vh;
-position:fixed;
-background:#003366;
-padding:20px;
+body{
+background:#f2f5f9;
 }
 
-.sidebar h2{
+.header{
+background:#0b3d91;
 color:white;
-}
-
-.sidebar a{
-display:block;
-color:white;
-text-decoration:none;
-padding:10px;
-margin-bottom:5px;
-background:#004c99;
-border-radius:4px;
-}
-
-.content{
-margin-left:270px;
 padding:20px;
+text-align:center;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
+.container{
+max-width:1200px;
+margin:auto;
+padding:15px;
 }
 
 .card{
 background:white;
-padding:20px;
+padding:15px;
+margin-bottom:15px;
 border-radius:10px;
 box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+input{
+padding:10px;
+flex:1;
+min-width:150px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+background:#0b3d91;
+color:white;
+cursor:pointer;
+border-radius:5px;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:10px;
 }
 
-table th,table td{
-border:1px solid #ddd;
-padding:10px;
-}
-
-button{
-background:#0066cc;
+table th{
+background:#0b3d91;
 color:white;
-padding:10px 20px;
-border:none;
-cursor:pointer;
 }
 
-input{
-padding:10px;
-width:100%;
-margin:5px 0;
-}
-``
-function getData(key){
-return JSON.parse(localStorage.getItem(key)) || [];
+table th,
+table td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
 }
 
-function saveData(key,data){
-localStorage.setItem(key,JSON.stringify(data));
+.summary{
+text-align:right;
+margin-top:20px;
 }
 
-function createInvoiceNumber(){
-return "INV-"+Date.now();
+.bank{
+margin-top:20px;
+line-height:28px;
 }
 
-console.log(createInvoiceNumber());
-<!DOCTYPE html>
-<html>
-<head>
-style.css
+.signature{
+text-align:right;
+margin-top:50px;
+}
+
+@media print{
+button{
+display:none;
+}
+body{
+background:white;
+}
+}
+</style>
+
 </head>
-
 <body>
 
-<div class="content">
+<div class="header">
 
-<h2>Customer Master</h2>
+<h1>EXCEL ELECTRICALS</h1>
 
-<input id="name" placeholder="Customer Name">
+<p>
+2/49 Aluva Munnar Road,
+Choondy, Edathala - 683112
+</p>
 
-<button onclick="saveCustomer()">
-Save Customer
-</button>
+<p>GSTIN : 32AAGPX3837Q1ZZ</p>
 
-<ul id="list"></ul>
+<p>Mob : 7510144188, 8590259451</p>
+
+<p>Email : excelelectricalswork@gmail.com</p>
 
 </div>
 
-<script>
+<div class="container">
 
-function saveCustomer(){
+<div class="card">
 
-let customers=
-JSON.parse(localStorage.getItem("customers"))
-||[];
+<div class="row">
 
-customers.push({
-name:document.getElementById("name").value
-});
+<input id="invoice"
+readonly>
 
-localStorage.setItem(
-"customers",
-JSON.stringify(customers)
-);
-
-location.reload();
-}
-
-let list=document.getElementById("list");
-
-(JSON.parse(localStorage.getItem("customers"))||[])
-.forEach(c=>{
-
-list.innerHTML+=`<li>${c.name}</li>`;
-
-});
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-style.css
-</head>
-
-<body>
-
-<div class="content">
-
-<h2>Product Master</h2>
-
-<input id="product" placeholder="Product">
-
-<input id="rate" placeholder="Rate">
-
-<button onclick="saveProduct()">
-Save Product
-</button>
+<input id="date"
+type="date">
 
 </div>
 
-<script>
+<br>
 
-function saveProduct(){
-
-let products=
-JSON.parse(localStorage.getItem("products"))
-||[];
-
-products.push({
-name:product.value,
-rate:rate.value
-});
-
-localStorage.setItem(
-"products",
-JSON.stringify(products)
-);
-
-alert("Saved");
-}
-
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-style.css
-</head>
-
-<body>
-
-<div class="content">
-
-<h1>Tax Invoice</h1>
+<div class="row">
 
 <input id="customer"
 placeholder="Customer Name">
 
+<input id="phone"
+placeholder="Mobile">
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Invoice Items</h2>
+
 <table>
 
+<thead>
 <tr>
-<th>Product</th>
+<th>Item</th>
 <th>Qty</th>
 <th>Rate</th>
 <th>Amount</th>
 </tr>
+</thead>
 
-<tr>
-<td><input id="p"></td>
-<td><input id="q"></td>
-<td><input id="r"></td>
-<td id="amt">0</td>
-</tr>
+<tbody id="items"></tbody>
 
 </table>
 
-<button onclick="calc()">
+<br>
+
+<button onclick="addRow()">
+Add Item
+</button>
+
+<button onclick="calculateBill()">
 Calculate
 </button>
 
-<h3>Total : ₹ <span id="total">0</span></h3>
-
 <button onclick="window.print()">
-Print Invoice
+Print Bill
 </button>
+
+</div>
+
+<div class="card summary">
+
+<h3>Subtotal : ₹ <span id="subtotal">0.00</span></h3>
+
+<h3>CGST 9% : ₹ <span id="cgst">0.00</span></h3>
+
+<h3>SGST 9% : ₹ <span id="sgst">0.00</span></h3>
+
+<h1>Total : ₹ <span id="grand">0.00</span></h1>
+
+</div>
+
+<div class="card bank">
+
+<h3>Bank Details</h3>
+
+<p><b>EXCEL ELECTRICALS</b></p>
+
+<p>Bank : State Bank of India</p>
+
+<p>Branch : Asokapuram</p>
+
+<p>A/C No : 43721477418</p>
+
+<p>IFSC : SBIN0008596</p>
+
+</div>
+
+<div class="card">
+
+<h3>Declaration</h3>
+
+<p>
+We declare that this invoice shows the
+actual value of goods/services supplied.
+</p>
+
+<div class="signature">
+
+<h3>For EXCEL ELECTRICALS</h3>
+
+<br><br>
+
+Authorized Signatory
+
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-function calc(){
+document.getElementById("invoice").value =
+"INV-" +
+Math.floor(Math.random()*90000+10000);
 
-let q=
-Number(document.getElementById("q").value);
+document.getElementById("date").value =
+new Date().toISOString().split("T")[0];
 
-let r=
-Number(document.getElementById("r").value);
+function addRow(){
 
-let a=q*r;
+let html = `
+<tr>
 
-let gst=a*0.18;
+<td>
+<input class="item">
+</td>
 
-document.getElementById("amt")
-.innerHTML=a.toFixed(2);
+<td>
+<input class="qty"
+type="number"
+value="1">
+</td>
 
-document.getElementById("total")
-.innerHTML=(a+gst).toFixed(2);
+<td>
+<input class="rate"
+type="number"
+value="0">
+</td>
+
+<td class="amount">
+0.00
+</td>
+
+</tr>
+`;
+
+document
+.getElementById("items")
+.insertAdjacentHTML(
+"beforeend",
+html
+);
 
 }
+
+function calculateBill(){
+
+let subtotal=0;
+
+document
+.querySelectorAll("#items tr")
+.forEach(row=>{
+
+let qty=parseFloat(
+row.querySelector(".qty").value
+)||0;
+
+let rate=parseFloat(
+row.querySelector(".rate").value
+)||0;
+
+let amt=qty*rate;
+
+row.querySelector(".amount")
+.innerHTML=
+amt.toFixed(2);
+
+subtotal+=amt;
+
+});
+
+let cgst=subtotal*0.09;
+
+let sgst=subtotal*0.09;
+
+let total=
+subtotal+cgst+sgst;
+
+document.getElementById(
+"subtotal"
+).innerHTML=
+subtotal.toFixed(2);
+
+document.getElementById(
+"cgst"
+).innerHTML=
+cgst.toFixed(2);
+
+document.getElementById(
+"sgst"
+).innerHTML=
+sgst.toFixed(2);
+
+document.getElementById(
+"grand"
+).innerHTML=
+total.toFixed(2);
+
+}
+
+addRow();
 
 </script>
 
 </body>
 </html>
-{
-  "name":"Excel Electricals Billing",
-  "short_name":"Billing",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#ffffff",
-  "theme_color":"#003366"
-}
-self.addEventListener("install",e=>{
-console.log("installed");
-});
-``
-git add .
-git commit -m "Tally Prime Billing Software"
-git push origin 
